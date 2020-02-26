@@ -3,9 +3,6 @@
 import Vue from "vue";
 import axios from "axios";
 
-import vuetify from "./vuetify";
-
-Vue.use(vuetify);
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -43,19 +40,20 @@ _axios.interceptors.response.use(
         data: { message }
       }
     } = error;
+
+    const { $confirm } = Vue.prototype;
     if (error.request.responseURL.includes("/auth/" > -1 && status === 401)) {
       return;
     } else if (status !== 404) {
       // handle this error, will not redirect to error page..
       return;
     } else if (status === 404) {
-      const confirm = await Vue.prototype.$confirm(message, {
+      await $confirm(message, {
         buttonTrueText: "确定",
         buttonFalseText: false,
         color: "error",
         title: "温馨提示"
       });
-      console.log(confirm);
       return;
     }
   }
