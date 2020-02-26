@@ -3,10 +3,14 @@
 import Vue from "vue";
 import axios from "axios";
 
+import store from "@/store";
+// import router from "@/router";
+
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.headers.post["Content-Type"] =
+  "application/x-www-form-urlencoded";
 
 let config = {
   baseURL: process.env.baseURL || process.env.apiUrl || "",
@@ -17,45 +21,53 @@ let config = {
 const _axios = axios.create(config);
 
 _axios.interceptors.request.use(
-  function(config) {
-    // Do something before request is sent
+  config => {
+    if (store.state.token && store.state.auth) {
+      config.hearders.Authorization = `Bearer ${store.state.token}`;
+    }
+
     return config;
   },
-  function(error) {
-    // Do something with request error
+  error => {
     return Promise.reject(error);
   }
 );
 
 // Add a response interceptor
 _axios.interceptors.response.use(
-  function(response) {
-    // Do something with response data
+  response => {
     return response;
   },
-  async function(error) {
-    const {
-      response: {
-        status,
-        data: { message }
-      }
-    } = error;
 
-    const { $confirm } = Vue.prototype;
-    if (error.request.responseURL.includes("/auth/" > -1 && status === 401)) {
-      return;
-    } else if (status !== 404) {
-      // handle this error, will not redirect to error page..
-      return;
-    } else if (status === 404) {
-      await $confirm(message, {
-        buttonTrueText: "确定",
-        buttonFalseText: false,
-        color: "error",
-        title: "温馨提示"
-      });
-      return;
+  async function(error) {
+    if (error.response) {
+      const { $confirm } = Vue.prototype;
+
+      if (error.response.data && error.response.data.message) {
+        // 如果有message值 则输出.
+        const message = error.response.data.message;
+        // 使用 confirm 组件提示用户.
+        await $confirm(message, {
+          buttonTrueText: "确定",
+          buttonFalseText: false,
+          color: "error",
+          title: "温馨提示"
+        });
+      }
+
+      switch (error.response.status) {
+        default:
+          if (error.response) {
+            return Promise.resolve(error.response);
+          }
+          break;
+      }
+
+      return Promise.reject(error.reponse.data);
     }
+
+    // 返回response 为 null 的情况, 底层不处理.
+    return Promise.resolve(error.reponse);
   }
 );
 
@@ -74,6 +86,10 @@ Plugin.install = function(Vue) {
       }
     }
   });
+};
+
+Plugin.getAxios = function() {
+  return _axios;
 };
 
 Vue.use(Plugin);

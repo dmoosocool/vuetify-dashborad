@@ -1,23 +1,22 @@
 <template>
   <v-app>
-    <Login v-if="!isLogin" />
-    <h1 v-else>hello vuetify</h1>
+    <h1>hello vuetify</h1>
+    <v-row align="center">
+      <v-col class="text-center" cols="12" sm="4">
+        <v-btn outlined @click="goAuth()">go to auth page.</v-btn>
+      </v-col>
+    </v-row>
   </v-app>
 </template>
 
 <script>
 // @ is an alias to /src
-import Login from "@/components/Login.vue";
 export default {
   name: "Home",
-  components: { Login },
-  data: function() {
-    return {
-      isLogin: false
-    };
-  },
-  async mounted() {
-    // await this.axios("http://localhost:3000");
+  methods: {
+    goAuth: function() {
+      this.$router.push({ name: "Auth" });
+    }
   }
 };
 </script>
