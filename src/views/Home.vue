@@ -1,22 +1,21 @@
 <template>
   <v-app>
-    <h1>hello vuetify</h1>
-    <v-row align="center">
-      <v-col class="text-center" cols="12" sm="4">
-        <v-btn outlined @click="goAuth()">go to auth page.</v-btn>
-      </v-col>
-    </v-row>
+    <Drawer />
+    <router-view></router-view>
   </v-app>
 </template>
-
 <script>
-// @ is an alias to /src
+import Drawer from "@/components/admin/Drawer.vue";
 export default {
-  name: "Home",
-  methods: {
-    goAuth: function() {
-      this.$router.push({ name: "Auth" });
-    }
+  components: {
+    Drawer
   }
 };
 </script>
+<style lang="scss">
+// @import "@/styles/index.scss";
+/* Remove in 1.2 */
+.v-datatable thead th.column.sortable i {
+  vertical-align: unset;
+}
+</style>
