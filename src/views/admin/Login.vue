@@ -43,17 +43,18 @@
 // @ is an alias to /src
 import authApi from "@/api/auth";
 export default {
-  name: "Home",
+  name: "Login",
   components: {},
-  data: function() {
+  data: function () {
     return {
       title: "酒店管理系统登陆",
       username: "",
       password: ""
     };
   },
+
   methods: {
-    async login() {
+    async login () {
       const { username, password } = this;
       if (username && password) {
         await authApi.login({ username, password });

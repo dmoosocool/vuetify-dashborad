@@ -1,13 +1,29 @@
 <template>
   <v-app>
-    <h1>this is a Auth Page.</h1>
-    <router-view></router-view>
+    <Drawer />
+    <Toolbar />
+    <div class="pa-10">
+      <v-content>
+        <v-slide-x-reverse-transition hide-on-leave>
+          <router-view />
+        </v-slide-x-reverse-transition>
+      </v-content>
+    </div>
   </v-app>
 </template>
-
 <script>
-// @ is an alias to /src
+import Drawer from "@/components/admin/Drawer.vue";
+import Toolbar from '@/components/admin/Toolbar.vue';
 export default {
-  name: "Auth"
+  components: {
+    Drawer,
+    Toolbar
+  },
 };
 </script>
+<style lang="scss">
+/* Remove in 1.2 */
+.v-datatable thead th.column.sortable i {
+  vertical-align: unset;
+}
+</style>

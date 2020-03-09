@@ -18,6 +18,6 @@ export default {
       token: data.token
     });
 
-    router.push({ name: "Home" });
+    router.push({ name: "AdminHome" });
   }
 };

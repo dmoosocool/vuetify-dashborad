@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 const vuexLocal = VuePersistence({
   storage: window.localStorage,
-  paths: ["auth"]
+  paths: ["auth", "app"]
 });
 
 export default new Vuex.Store({

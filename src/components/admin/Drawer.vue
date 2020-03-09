@@ -2,24 +2,26 @@
 <template>
   <v-navigation-drawer
     id="app-drawer"
-    v-model="inputValue"
+    v-model="drawer"
     app
-    dark
+    color="grey lighten-4"
     floating
     persistent
+    :mini-variant="miniVariant"
     mobile-break-point="991"
+    @mini-variant-state-change="miniVariantStateChange"
     width="260"
   >
-    <v-card class="mx-auto" max-width="500">
-      <v-list>
-        <v-list-item-group mandatory dark>
-          <v-list-item v-for="(link,i) in links" :key="i" link :to="link.to">
+    <v-card class="mx-auto" max-width="300" tile>
+      <v-list dense>
+        <v-subheader>Hotel</v-subheader>
+        <v-list-item-group>
+          <v-list-item v-for="(item, i) in items" :key="i" :to="item.link">
             <v-list-item-icon>
-              <v-icon v-text="link.icon"></v-icon>
+              <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
-
             <v-list-item-content>
-              <v-list-item-title v-text="link.text"></v-list-item-title>
+              <v-list-item-title v-text="item.text"></v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -30,77 +32,64 @@
 
 <script>
 // Utilities
-import { mapMutations, mapState } from "vuex";
+// import { mapMutations, mapState } from "vuex";
 export default {
-  props: {
-    opened: {
-      type: Boolean,
-      default: false
-    }
-  },
   data: () => ({
-    item: 0,
-    items: [
-      { text: "My Files", icon: "mdi-folder" },
-      { text: "Shared with me", icon: "mdi-account-multiple" },
-      { text: "Starred", icon: "mdi-star" },
-      { text: "Recent", icon: "mdi-history" },
-      { text: "Offline", icon: "mdi-check-circle" },
-      { text: "Uploads", icon: "mdi-upload" },
-      { text: "Backups", icon: "mdi-cloud-upload" }
+    items: [],
+    adminItems: [
+      { text: '仪表盘', icon: 'mdi-home', "link": { name: "AdminHome" } },
+      { text: '用户管理', icon: 'mdi-account', "link": { name: "AdminUser" } },
+      { text: '物资管理', icon: 'mdi-cart', "link": { name: "AdminGood" } },
+      { text: '客房管理', icon: 'mdi-home-group', "link": { name: "AdminRoom" } },
     ],
-    logo: "favicon.ico",
-    links: [
-      {
-        to: "/",
-        icon: "mdi-view-dashboard",
-        text: "Dashboard"
-      },
-      {
-        to: "/auth",
-        icon: "mdi-account",
-        text: "User Profile"
-      },
-      {
-        to: "/table-list",
-        icon: "mdi-clipboard-outline",
-        text: "Table List"
-      },
-      {
-        to: "/typography",
-        icon: "mdi-format-font",
-        text: "Typography"
-      },
-      {
-        to: "/icons",
-        icon: "mdi-chart-bubble",
-        text: "Icons"
-      },
-      {
-        to: "/maps",
-        icon: "mdi-map-marker",
-        text: "Maps"
-      },
-      {
-        to: "/notifications",
-        icon: "mdi-bell",
-        text: "Notifications"
-      }
+
+    guestItems: [
+      { text: '仪表盘', icon: 'mdi-home', "link": { name: "MemberHome" } },
+      { text: '客房管理', icon: 'mdi-door-closed-lock', "link": { name: "MemberRoom" } },
+      { text: '会员管理', icon: 'mdi-account-details', "link": { name: "MemberInfo" } },
+      { text: '账户管理', icon: 'mdi-account-cog', "link": { name: "MemberAccount" } },
     ]
+
   }),
   computed: {
-    ...mapState("app", ["image", "color"]),
-    inputValue: {
-      get() {
-        return this.$store.state.app.drawer;
+    // ...mapState("app", ["drawer", "miniVariant"]),
+    drawer: {
+      get () {
+        return this.$store.state.app.drawer
       },
-      set(val) {
-        this.setDrawer(val);
+
+      set (drawer) {
+        this.$store.commit('app/setDrawer', drawer)
+
+      }
+    },
+
+    miniVariant: {
+      get () {
+        return this.$store.state.app.miniVariant
+      },
+
+      set (miniVariant) {
+        this.$store.commit('app/setMiniVariant', miniVariant)
       }
     }
   },
+
+  mounted () {
+    if (this.$route.fullPath.indexOf('member') > -1) {
+      this.items = this.guestItems;
+    } else {
+      this.items = this.adminItems
+    }
+
+
+  },
+
   methods: {
-    ...mapMutations("app", ["setDrawer", "toggleDrawer"])
+    miniVariantStateChange: (name) => {
+      // this.miniVariantState = !this.miniVariantState;
+      console.log(name);
+    }
   }
 };
 </script>

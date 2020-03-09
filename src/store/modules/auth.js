@@ -1,5 +1,3 @@
-// import auth from "@/api/auth";
-
 // initial state
 const state = {
   me: {}
